@@ -1,0 +1,569 @@
+openapi: 3.0.0
+info:
+  title: Электронный кошелёк "Картошка"
+  version: "0.1"
+servers:
+  - url: http://localhost:8080/potato
+    description: Сервер Картошки
+paths:
+
+  /users:
+    post:
+      summary: Создать пользователя
+      tags:
+        - Пользователи
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Успешный ответ с идентификатором пользователя
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 123
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /users/{userId}:
+    get:
+      summary: Получить пользователя по идентификатору
+      tags:
+        - Пользователи
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+          example: 111
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ с пользователем
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      summary: Обновить пользователя
+      tags:
+        - Пользователи
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+          example: 111
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastName:
+                  type: string
+                  example: Богданов
+                  description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+                firstName:
+                  type: string
+                  example: Богдан
+                  description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+                middleName:
+                  type: string
+                  example: Богданович
+                  description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+                birthdate:
+                  type: string
+                  format: date
+                  example: "2000-01-01"
+                  description: Дата рождения в формате ISO 8601 (YYYY-MM-DD)
+      responses:
+        "200":
+          description: Успешный ответ
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /wallets/{userId}:
+    get:
+      summary: Получить информацию о кошельке
+      tags:
+        - Кошелёк
+      operationId: getWalletByUserId
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+          example: 123
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ с кошельком
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /wallets/{userId}/HESOYAM:
+    post:
+      summary: HESOYAM (25% шанс на деньги)
+      tags:
+        - Кошелёк
+      operationId: HESOYAM
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Идентификатор пользователя
+          schema:
+            type: string
+          example: 123
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /transfers:
+    post:
+      summary: Создать и выполнить перевод
+      tags:
+        - Денежные переводы
+      operationId: createTransfer
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                walletId:
+                  type: integer
+                  example: 123
+                  description: Номер кошелька
+                amount:
+                  type: integer
+                  example: 1000
+                  description: Сумма денежных единиц операции
+      responses:
+        "200":
+          description: Успешный ответ с информацией о переводе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      summary: Получить информацию о всех переводах по фильтрам
+      tags:
+        - Денежные переводы
+      operationId: getTransfers
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+        - name: transferType
+          in: query
+          required: true
+          description: Тип перевода (входящие/исходящие)
+          schema:
+            type: string
+            enum:
+              - in
+              - out
+        - name: active
+          in: query
+          required: true
+          description: Статус перевода (оплачен/не оплачен)
+          schema:
+            type: string
+            enum:
+              - paid
+              - unpaid
+        - name: userId
+          in: query
+          required: true
+          description: Идентификатор пользователя-получателя
+          schema:
+            type: string
+          example: 123
+      responses:
+        "200":
+          description: Успешный ответ с информацией о переводе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfers"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /transfers/{transferId}:
+    get:
+      summary: Получить информацию о переводе
+      tags:
+        - Денежные переводы
+      operationId: getTransferById
+      parameters:
+        - name: transferId
+          in: path
+          required: true
+          description: Идентификатор транзакции
+          schema:
+            type: string
+          example: 12345
+        - name: Authorization
+          in: header
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ с информацией о переводе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transfer"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /sessions:
+    post:
+      summary: Создать сессию
+      tags:
+        - Сессии
+      operationId: createSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: 123
+                  description: идентификатор пользователя
+                password:
+                  type: string
+                  example: pwd
+                  description: пароль
+      responses:
+        "200":
+          description: Успешный ответ с сессией
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /sessions/{sessionId}:
+    get:
+      summary: Получить информацию о сессии
+      tags:
+        - Сессии
+      operationId: getSessionById
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ с сессией
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Выйти из сессии
+      tags:
+        - Сессии
+      operationId: closeSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Идентификатор сессии
+          schema:
+            type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+      responses:
+        "200":
+          description: Успешный ответ
+        "default":
+          description: Ошибки
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - lastName
+        - firstName
+        - phone
+        - email
+        - birthdate
+        - password
+      properties:
+        lastName:
+          type: string
+          example: Богданов
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        firstName:
+          type: string
+          example: Богдан
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        middleName:
+          type: string
+          example: Богданович
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        phone:
+          type: string
+          example: 78005553535
+          description: 11 цифр, начинается с '7' К номеру телефона может быть привязан только один пользователь.
+        email:
+          type: string
+          format: email
+          example: potato@mail.ru
+          description: Стандартный адрес электронной почты. К электронной почте может быть привязан только один пользователь.
+        birthdate:
+          type: string
+          format: date
+          example: "2000-01-01"
+          description: Дата рождения в формате ISO 8601 (YYYY-MM-DD)
+        password:
+          type: string
+          format: password
+          example: pass123
+          description: от 8 до 64 символов. Только латинские символы, цифры, знаки только !?. Обязательно наличие минимум 1 буквы верхнего и нижнего регистра, цифры и знака.
+
+    UserInfo:
+      type: object
+      required:
+        - lastName
+        - firstName
+        - phone
+        - email
+        - birthdate
+      properties:
+        lastName:
+          type: string
+          example: Богданов
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        firstName:
+          type: string
+          example: Богдан
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        middleName:
+          type: string
+          example: Богданович
+          description: Только буквы русского алфавита. Первая буква - заглавная. Не более 50 символов.
+        phone:
+          type: string
+          example: 78005553535
+          description: 11 цифр, начинается с '7' К номеру телефона может быть привязан только один пользователь.
+        email:
+          type: string
+          format: email
+          example: potato@mail.ru
+          description: Стандартный адрес электронной почты. К электронной почте может быть привязан только один пользователь.
+        birthdate:
+          type: string
+          format: date
+          example: "2000-01-01"
+          description: Дата рождения в формате ISO 8601 (YYYY-MM-DD)
+
+    Wallet:
+      type: object
+      required:
+        - number
+        - balance
+      properties:
+        number:
+          type: integer
+          example: 123
+          description: Номер кошелька
+        balance:
+          type: integer
+          example: 123
+          description: Баланс кошелька
+
+    Transfer:
+      type: object
+      required:
+        - creationTime
+        - amount
+        - transferType
+      properties:
+        transferId:
+          type: string
+          example: 12345
+          description: Идентификатор перевода
+        creationTime:
+          type: string
+          format: date-time
+          example: "2023-07-02T14:48:00Z"
+          description: Дата и время операции в ISO 8601 формате (ГГГГ-ММ-ДДTЧЧ:ММ:ССZ)
+        amount:
+          type: integer
+          example: 1000
+          description: Сумма денежных единиц операции
+        transferType:
+          type: string
+          enum:
+            - transfer
+          description: Тип операции
+        status:
+          type: string
+          enum:
+            - paid
+            - unpaid
+          description: Статус операции
+
+    Transfers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Transfer"
+
+    Session:
+      type: object
+      required:
+        - expirationTime
+        - sessionId
+        - active
+      properties:
+        expirationTime:
+          type: string
+          format: date-time
+          example: "2023-07-02T14:48:00Z"
+          description: Дата и время в формате ISO 8601 (ГГГГ-ММ-ДДTЧЧ:ММ:ССZ)
+        sessionId:
+          type: string
+          example: 2527d786-d0d7-47d9-872b-af295552103b
+          description: идентификатор сессии
+        active:
+          type: boolean
+          description: Статус сессии
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 1
+          description: Внутренний код ошибки
+        message:
+          type: string
+          example: "Internal error"
+          description: Пояснение к ошибке
