@@ -3,14 +3,20 @@ package ru.cft.template.core.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import ru.cft.template.api.dto.CreateUserDto;
-import ru.cft.template.api.dto.GetUserByIdDto;
-import ru.cft.template.api.dto.UpdateUserDto;
+import ru.cft.template.api.dto.user.CreateUserDto;
+import ru.cft.template.api.dto.user.GetUserByIdDto;
+import ru.cft.template.api.dto.user.UpdateUserDto;
 import ru.cft.template.api.mapper.UserMapper;
+import ru.cft.template.core.exception.AccessRightsException;
+import ru.cft.template.core.exception.SessionNotFoundException;
 import ru.cft.template.core.exception.UserNotFoundException;
+import ru.cft.template.core.repository.SessionRepository;
 import ru.cft.template.core.service.UserService;
+import ru.cft.template.core.service.WalletService;
+import ru.cft.template.entity.Session;
 import ru.cft.template.entity.User;
-import ru.cft.template.repository.UserRepository;
+import ru.cft.template.entity.Wallet;
+import ru.cft.template.core.repository.UserRepository;
 
 import java.util.UUID;
 
@@ -19,27 +25,56 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final WalletService walletService;
+
+    private final SessionRepository sessionRepository;
 
     @Override
     public UUID createUser(CreateUserDto createUserDto) {
         User user = UserMapper.createUserMapper(createUserDto);
+        Wallet wallet=walletService.createWallet();
+        user.setWallet(wallet);
+
         userRepository.save(user);
-        //UUID id = user.getId();
-        //return null;
         return user.getId();
     }
 
     @Override
-    public GetUserByIdDto getUserById(UUID userId) {
+    public GetUserByIdDto getUserById(UUID userId, UUID sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
+
+        if (userId != session.getUserId()) {
+            throw new AccessRightsException("Можно посмотреть только свой профиль");
+        }
+
+        /*if(!session.getActive())
+        {
+            throw new UserNotFoundException("вы не авторизованы");
+        }*/
+
         return UserMapper.getUserMapper(user);
     }
 
     @Override
-    public ResponseEntity<String> updateUser(UUID userId, UpdateUserDto updateUserDto) {
+    public ResponseEntity<String> updateUser(UUID userId, UpdateUserDto updateUserDto, UUID sessionId) {
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
+
+        if (userId != session.getUserId()) {
+            throw new AccessRightsException("Можно изменить только свой профиль");
+        }
+
+        /*if(!session.getActive())
+        {
+            throw new AuthorizationException("вы не авторизованы");
+        }*/
 
         if (updateUserDto.lastName() != null) {
             user.setLastName(updateUserDto.lastName());
