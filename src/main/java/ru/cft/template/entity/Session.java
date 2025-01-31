@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,7 +21,8 @@ public class Session {
     private UUID userId;
 
     @Column(nullable = false)
-    private LocalDateTime expirationTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expirationTime;
 
     @Column(nullable = false)
     private Boolean active;

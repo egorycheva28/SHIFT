@@ -17,6 +17,7 @@ import ru.cft.template.core.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -41,7 +42,7 @@ public class SessionServiceImpl implements SessionService {
 
         Session session = new Session();
         session.setUserId(user.getId());
-        session.setExpirationTime(LocalDateTime.parse(formattedDateTime));
+        //session.setExpirationTime(Date.parse(formattedDateTime));
         session.setActive(true);
         sessionRepository.save(session);
 

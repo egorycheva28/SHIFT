@@ -29,6 +29,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet createWallet() {
         Wallet wallet = new Wallet();
+        wallet.setNumber(1);
         wallet.setBalance(100L);
 
         walletRepository.save(wallet);

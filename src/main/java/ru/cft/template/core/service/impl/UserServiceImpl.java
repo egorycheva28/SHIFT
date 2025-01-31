@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UUID createUser(CreateUserDto createUserDto) {
         User user = UserMapper.createUserMapper(createUserDto);
-        Wallet wallet=walletService.createWallet();
+        Wallet wallet = walletService.createWallet();
         user.setWallet(wallet);
 
         userRepository.save(user);
