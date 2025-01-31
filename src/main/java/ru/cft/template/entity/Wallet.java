@@ -3,6 +3,7 @@ package ru.cft.template.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.cft.template.core.exception.BalanceException;
 
 @Entity
 @Table(name = "wallets")
@@ -17,4 +18,15 @@ public class Wallet {
     @Column(nullable = false)
     private Long balance;
 
+    public void minusAmount(Long amount) {
+        if (amount <= balance) {
+            balance -= amount;
+        } else {
+            throw new BalanceException("Недостаточно средств на счету");
+        }
+    }
+
+    public void plusAmount(Long amount) {
+        balance += amount;
+    }
 }
