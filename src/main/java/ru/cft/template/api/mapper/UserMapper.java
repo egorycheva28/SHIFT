@@ -1,8 +1,8 @@
 package ru.cft.template.api.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.cft.template.api.dto.CreateUserDto;
-import ru.cft.template.api.dto.GetUserByIdDto;
+import ru.cft.template.api.dto.user.CreateUserDto;
+import ru.cft.template.api.dto.user.GetUserByIdDto;
 import ru.cft.template.entity.User;
 
 @Component
@@ -20,15 +20,15 @@ public class UserMapper {
         return user;
     }
 
-    public static GetUserByIdDto getUserMapper(User userModel)
+    public static GetUserByIdDto getUserMapper(User user)
     {
         return new GetUserByIdDto(
-                userModel.getLastName(),
-                userModel.getFirstName(),
-                userModel.getMiddleName(),
-                userModel.getPhone(),
-                userModel.getEmail(),
-                userModel.getBirthday()
+                user.getLastName(),
+                user.getFirstName(),
+                user.getMiddleName(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getBirthday()
         );
 
     }
