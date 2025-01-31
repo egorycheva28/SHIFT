@@ -46,10 +46,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-dockerCompose() {
-	projectName = 'wallet'
-	useComposeFiles = ['docker-compose.yml']
-}
+
 
 jar {
 	manifest {
