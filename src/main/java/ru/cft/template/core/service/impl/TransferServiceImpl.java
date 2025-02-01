@@ -70,33 +70,7 @@ public class TransferServiceImpl implements TransferService {
         return TransferMapper.ResponseTransferMapper(transfer);
     }
 
-    /*@Override
-    public List<ResponseTransferDto> getTransfers(FilterTransfersDto filterTransfersDto, UUID sessionId) {
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
 
-        if (filterTransfersDto.transferType() == TransferType.TRANSFER) {
-
-        }
-        if (filterTransfersDto.active() == StatusTransfer.PAID) {
-
-        }
-        if (filterTransfersDto.active() == StatusTransfer.UNPAID) {
-
-        }
-
-        List<Transfer> transfers = (List<Transfer>) transferRepository.findAll();
-        for (Transfer transfer : transfers) {
-            //System.out.println("ID: " + transfer.getId() + ", Name: " + transfer.getName());
-        }
-
-        if(!session.getActive())
-        {
-            throw new UserNotFoundException("вы не авторизованы");
-        }
-
-        return List < TransferMapper.ResponseTransferMapper(transfer) >;
-    }*/
 
     @Override
     public ResponseTransferDto getTransferById(UUID transferId, UUID sessionId) {
