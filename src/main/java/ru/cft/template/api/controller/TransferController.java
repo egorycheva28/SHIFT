@@ -1,18 +1,12 @@
 package ru.cft.template.api.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.cft.template.api.dto.CreateTransferDto;
-import ru.cft.template.api.dto.FilterTransfersDto;
-import ru.cft.template.api.dto.ResponseTransferDto;
-import ru.cft.template.api.dto.user.CreateUserDto;
-import ru.cft.template.api.dto.user.GetUserByIdDto;
-import ru.cft.template.api.dto.user.UpdateUserDto;
+import ru.cft.template.api.dto.transfer.CreateTransferDto;
+import ru.cft.template.api.dto.transfer.ResponseTransferDto;
 import ru.cft.template.core.exception.AuthorizationException;
 import ru.cft.template.core.service.TransferService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController

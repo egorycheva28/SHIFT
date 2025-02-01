@@ -1,4 +1,4 @@
-package ru.cft.template.core;
+package ru.cft.template.core.exceptionHandler;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,5 +41,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BalanceException.class)
     public ResponseEntity<Object> handleBalanceException(BalanceException ex) {
         return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = LoginException.class)
+    public ResponseEntity<Object> handleLoginException(LoginException ex) {
+        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

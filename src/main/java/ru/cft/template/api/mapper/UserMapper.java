@@ -3,7 +3,7 @@ package ru.cft.template.api.mapper;
 import org.springframework.stereotype.Component;
 import ru.cft.template.api.dto.user.CreateUserDto;
 import ru.cft.template.api.dto.user.GetUserByIdDto;
-import ru.cft.template.entity.User;
+import ru.cft.template.core.entity.User;
 
 @Component
 public class UserMapper {
@@ -17,6 +17,7 @@ public class UserMapper {
         user.setPhone(createUserDto.phone());
         user.setEmail(createUserDto.email());
         user.setBirthday(createUserDto.birthday());
+        user.setPassword(createUserDto.password());
         return user;
     }
 

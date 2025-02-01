@@ -1,10 +1,10 @@
-package ru.cft.template.entity;
+package ru.cft.template.core.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.cft.template.api.dto.StatusTransfer;
-import ru.cft.template.api.dto.TransferType;
+import ru.cft.template.api.dto.transfer.enums.StatusTransfer;
+import ru.cft.template.api.dto.transfer.enums.TransferType;
 
 import java.util.Date;
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class Transfer {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID userId;
+    private UUID userId; //кому переводят
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

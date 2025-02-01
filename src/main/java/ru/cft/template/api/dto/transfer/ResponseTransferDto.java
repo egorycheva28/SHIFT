@@ -1,10 +1,13 @@
-package ru.cft.template.api.dto;
+package ru.cft.template.api.dto.transfer;
+
+import ru.cft.template.api.dto.transfer.enums.StatusTransfer;
+import ru.cft.template.api.dto.transfer.enums.TransferType;
 
 import java.util.Date;
 import java.util.UUID;
 
 public record ResponseTransferDto(
-         UUID id,
+         UUID transferId,
          UUID userId,
          Date creationTime,
          Long amount,

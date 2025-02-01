@@ -2,7 +2,7 @@ package ru.cft.template.api.mapper;
 
 import org.springframework.stereotype.Component;
 import ru.cft.template.api.dto.wallet.GetWalletDto;
-import ru.cft.template.entity.Wallet;
+import ru.cft.template.core.entity.Wallet;
 
 @Component
 public class WalletMapper {

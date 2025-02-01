@@ -6,18 +6,17 @@ import org.springframework.stereotype.Service;
 import ru.cft.template.api.dto.session.LoginDto;
 import ru.cft.template.api.dto.session.GetSessionDto;
 import ru.cft.template.api.mapper.SessionMapper;
-import ru.cft.template.core.exception.AccessRightsException;
+import ru.cft.template.core.exception.LoginException;
 import ru.cft.template.core.exception.SessionNotFoundException;
 import ru.cft.template.core.exception.UserNotFoundException;
 import ru.cft.template.core.service.SessionService;
-import ru.cft.template.entity.Session;
-import ru.cft.template.entity.User;
+import ru.cft.template.core.entity.Session;
+import ru.cft.template.core.entity.User;
 import ru.cft.template.core.repository.SessionRepository;
 import ru.cft.template.core.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -30,19 +29,15 @@ public class SessionServiceImpl implements SessionService {
     @Override
     public GetSessionDto createSession(LoginDto loginDto) {
         User user = userRepository.findById(loginDto.userId())
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException("User with ID: " + loginDto.userId() + " not found"));
 
-        if (user == null){
-            throw new UserNotFoundException("Invalid login details");
+        if (!Objects.equals(user.getPassword(), loginDto.password())){
+            throw new LoginException("Неправильные входные данные");
         }
-
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = currentDateTime.format(formatter);
 
         Session session = new Session();
         session.setUserId(user.getId());
-        //session.setExpirationTime(Date.parse(formattedDateTime));
+        session.setExpirationTime(new Date());
         session.setActive(true);
         sessionRepository.save(session);
 
@@ -54,11 +49,6 @@ public class SessionServiceImpl implements SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
 
-        //проверка, что это твоя активная сессия
-        /* if (!session.getUserId().equals(currentUserId)) {
-            throw new AccessRightsException("Можно выйти только из своей сессии");
-        }*/
-
         return SessionMapper.getSessionMapper(session);
     }
 
@@ -66,11 +56,6 @@ public class SessionServiceImpl implements SessionService {
     public ResponseEntity<String> closeSession(UUID sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
-
-        //проверка, что это твоя активная сессия
-        /* if (!session.getUserId().equals(currentUserId)) {
-            throw new AccessRightsException("Можно выйти только из своей сессии");
-        }*/
 
         sessionRepository.deleteById(sessionId);
         return ResponseEntity.ok("Вы вышли из системы");

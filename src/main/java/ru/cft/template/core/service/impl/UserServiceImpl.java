@@ -13,9 +13,9 @@ import ru.cft.template.core.exception.UserNotFoundException;
 import ru.cft.template.core.repository.SessionRepository;
 import ru.cft.template.core.service.UserService;
 import ru.cft.template.core.service.WalletService;
-import ru.cft.template.entity.Session;
-import ru.cft.template.entity.User;
-import ru.cft.template.entity.Wallet;
+import ru.cft.template.core.entity.Session;
+import ru.cft.template.core.entity.User;
+import ru.cft.template.core.entity.Wallet;
 import ru.cft.template.core.repository.UserRepository;
 
 import java.util.UUID;
@@ -46,15 +46,12 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
+        System.out.println(userId);
+        System.out.println(session.getUserId());
 
-        if (userId != session.getUserId()) {
+        if (!userId.equals( session.getUserId())) {
             throw new AccessRightsException("Можно посмотреть только свой профиль");
         }
-
-        /*if(!session.getActive())
-        {
-            throw new UserNotFoundException("вы не авторизованы");
-        }*/
 
         return UserMapper.getUserMapper(user);
     }
@@ -67,14 +64,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
 
-        if (userId != session.getUserId()) {
+        if (!userId.equals( session.getUserId())) {
             throw new AccessRightsException("Можно изменить только свой профиль");
         }
-
-        /*if(!session.getActive())
-        {
-            throw new AuthorizationException("вы не авторизованы");
-        }*/
 
         if (updateUserDto.lastName() != null) {
             user.setLastName(updateUserDto.lastName());

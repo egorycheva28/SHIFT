@@ -9,9 +9,9 @@ import ru.cft.template.core.exception.SessionNotFoundException;
 import ru.cft.template.core.exception.UserNotFoundException;
 import ru.cft.template.core.repository.SessionRepository;
 import ru.cft.template.core.service.WalletService;
-import ru.cft.template.entity.Session;
-import ru.cft.template.entity.User;
-import ru.cft.template.entity.Wallet;
+import ru.cft.template.core.entity.Session;
+import ru.cft.template.core.entity.User;
+import ru.cft.template.core.entity.Wallet;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.repository.WalletRepository;
 
@@ -29,7 +29,6 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet createWallet() {
         Wallet wallet = new Wallet();
-        wallet.setNumber(1);
         wallet.setBalance(100L);
 
         walletRepository.save(wallet);
@@ -44,14 +43,9 @@ public class WalletServiceImpl implements WalletService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: " + userId + " not found"));
 
-        if (userId != session.getUserId()) {
+        if (!userId.equals( session.getUserId())) {
             throw new AccessRightsException("Можно посмотреть только свой кошелек");
         }
-
-        /*if(!session.getActive())
-        {
-            throw new AuthorizationException("вы не авторизованы");
-        }*/
 
         return WalletMapper.getWalletMapper(user.getWallet());
     }

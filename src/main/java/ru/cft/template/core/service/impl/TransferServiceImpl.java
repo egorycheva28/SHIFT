@@ -2,9 +2,10 @@ package ru.cft.template.core.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.cft.template.api.dto.*;
-import ru.cft.template.api.dto.user.CreateUserDto;
-import ru.cft.template.api.dto.user.GetUserByIdDto;
+import ru.cft.template.api.dto.transfer.CreateTransferDto;
+import ru.cft.template.api.dto.transfer.ResponseTransferDto;
+import ru.cft.template.api.dto.transfer.enums.StatusTransfer;
+import ru.cft.template.api.dto.transfer.enums.TransferType;
 import ru.cft.template.api.mapper.TransferMapper;
 import ru.cft.template.core.exception.*;
 import ru.cft.template.core.repository.SessionRepository;
@@ -12,11 +13,10 @@ import ru.cft.template.core.repository.TransferRepository;
 import ru.cft.template.core.repository.UserRepository;
 import ru.cft.template.core.repository.WalletRepository;
 import ru.cft.template.core.service.TransferService;
-import ru.cft.template.core.service.WalletService;
-import ru.cft.template.entity.Session;
-import ru.cft.template.entity.Transfer;
-import ru.cft.template.entity.User;
-import ru.cft.template.entity.Wallet;
+import ru.cft.template.core.entity.Session;
+import ru.cft.template.core.entity.Transfer;
+import ru.cft.template.core.entity.User;
+import ru.cft.template.core.entity.Wallet;
 
 import java.util.Date;
 import java.util.List;
@@ -61,10 +61,11 @@ public class TransferServiceImpl implements TransferService {
         transfer.setAmount(createTransferDto.amount());
         transfer.setTransferType(TransferType.TRANSFER);
         transfer.setStatus(StatusTransfer.PAID);
-        transferRepository.save(transfer);
 
         wallet.plusAmount(createTransferDto.amount());
         user.getWallet().minusAmount(createTransferDto.amount());
+
+        transferRepository.save(transfer);
 
         return TransferMapper.ResponseTransferMapper(transfer);
     }
@@ -104,11 +105,6 @@ public class TransferServiceImpl implements TransferService {
 
         Transfer transfer = transferRepository.findById(transferId)
                 .orElseThrow(() -> new TransferNotFoundException("Transfer with ID: " + transferId + " not found"));
-
-        /*if(!session.getActive())
-        {
-            throw new UserNotFoundException("вы не авторизованы");
-        }*/
 
         return TransferMapper.ResponseTransferMapper(transfer);
     }

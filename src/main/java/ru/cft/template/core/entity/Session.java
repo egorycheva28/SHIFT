@@ -1,4 +1,4 @@
-package ru.cft.template.entity;
+package ru.cft.template.core.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

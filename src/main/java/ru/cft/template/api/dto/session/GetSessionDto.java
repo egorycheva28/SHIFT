@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public record GetSessionDto(
-        UUID Id,
+        UUID sessionId,
         UUID userId,
         Date expirationTime,
         Boolean active
