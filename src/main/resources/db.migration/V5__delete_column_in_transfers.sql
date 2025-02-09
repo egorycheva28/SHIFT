@@ -1,0 +1,3 @@
+BEGIN;
+ALTER TABLE transfers
+DROP COLUMN user_id;
