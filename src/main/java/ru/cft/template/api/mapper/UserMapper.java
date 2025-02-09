@@ -3,6 +3,8 @@ package ru.cft.template.api.mapper;
 import org.springframework.stereotype.Component;
 import ru.cft.template.api.dto.user.CreateUserDto;
 import ru.cft.template.api.dto.user.GetUserByIdDto;
+import ru.cft.template.api.dto.user.ReturnUserDto;
+import ru.cft.template.api.dto.user.ShotResponseDto;
 import ru.cft.template.core.entity.User;
 
 @Component
@@ -31,6 +33,22 @@ public class UserMapper {
                 user.getEmail(),
                 user.getBirthday()
         );
+    }
 
+    public static ShotResponseDto shotResponseMapper(User user)
+    {
+        return new ShotResponseDto(
+                user.getLastName(),
+                user.getFirstName(),
+                user.getMiddleName(),
+                user.getBirthday()
+        );
+    }
+
+    public static ReturnUserDto returnUserMapper(User user)
+    {
+        return new ReturnUserDto(
+                user.getId()
+        );
     }
 }
