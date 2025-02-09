@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public record ResponseTransferDto(
          UUID transferId,
-         UUID userId,
          Date creationTime,
          Long amount,
          TransferType transferType,

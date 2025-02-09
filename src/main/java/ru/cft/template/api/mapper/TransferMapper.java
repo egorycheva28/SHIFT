@@ -11,7 +11,6 @@ public class TransferMapper {
     {
         return new ResponseTransferDto(
                 transfer.getId(),
-                transfer.getUserId(),
                 transfer.getCreationTime(),
                 transfer.getAmount(),
                 transfer.getTransferType(),

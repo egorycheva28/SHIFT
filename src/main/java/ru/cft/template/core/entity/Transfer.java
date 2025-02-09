@@ -1,6 +1,7 @@
 package ru.cft.template.core.entity;
 
 import jakarta.persistence.*;
+import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import ru.cft.template.api.dto.transfer.enums.StatusTransfer;
@@ -17,22 +18,36 @@ public class Transfer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID userId; //кому переводят
+    @ManyToOne
+    @JoinColumn(name = "sender_wallet_id", referencedColumnName = "number")
+    private Wallet senderWallet; //кто переводит
 
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "receive_wallet_id", referencedColumnName = "number")
+    private Wallet receiveWallet; //кому переводят
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_phone", referencedColumnName = "phone")
+    private User receiverPhone; //кому переводят
+
+    @NotNull(message = "CreationTime - это обязательное поле.")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "creation_time", nullable = false)
     private Date creationTime;
 
-    @Column(nullable = false)
+    @NotNull(message = "Amount - это обязательное поле.")
+    @Column(name = "amount", nullable = false)
     private Long amount;
 
-    @Column(nullable = false)
+    @NotNull(message = "TransferType - это обязательное поле.")
+    @Column(name = "transfer_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransferType transferType;
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private StatusTransfer status;
 
