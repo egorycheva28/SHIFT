@@ -6,45 +6,90 @@ import ru.cft.template.core.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = SessionNotFoundException.class)
-    public ResponseEntity<Object> handleSessionNotFoundException(SessionNotFoundException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleSessionNotFoundException(SessionNotFoundException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleUserNotFoundException(UserNotFoundException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = WalletNotFoundException.class)
-    public ResponseEntity<Object> handleWalletNotFoundException(WalletNotFoundException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleWalletNotFoundException(WalletNotFoundException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = TransferNotFoundException.class)
-    public ResponseEntity<Object> handleTransferNotFoundException(TransferNotFoundException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, Object>> handleTransferNotFoundException(TransferNotFoundException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = AuthorizationException.class)
-    public ResponseEntity<Object> handleAuthorizationException(AuthorizationException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Map<String, Object>> handleAuthorizationException(AuthorizationException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Authorization Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(value = AccessRightsException.class)
-    public ResponseEntity<Object> handleAccessRightsException(AccessRightsException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Map<String, Object>> handleAccessRightsException(AccessRightsException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = BalanceException.class)
-    public ResponseEntity<Object> handleBalanceException(BalanceException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Map<String, Object>> handleBalanceException(BalanceException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = LoginException.class)
-    public ResponseEntity<Object> handleLoginException(LoginException ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleLoginException(LoginException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Login Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = ValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleCreateUserException(ValidationException ex) {
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("error", "Validation Error");
+        errorBody.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+    }
+
 }
