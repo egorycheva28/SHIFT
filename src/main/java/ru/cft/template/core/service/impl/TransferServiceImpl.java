@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cft.template.api.dto.transfer.CreateTransferDto;
+import ru.cft.template.api.dto.transfer.ListTransfersDto;
+import ru.cft.template.api.dto.transfer.Pagination;
 import ru.cft.template.api.dto.transfer.ResponseTransferDto;
 import ru.cft.template.api.dto.transfer.enums.StatusTransfer;
 import ru.cft.template.api.dto.transfer.enums.TransferType;
@@ -19,14 +21,10 @@ import ru.cft.template.core.entity.Session;
 import ru.cft.template.core.entity.Transfer;
 import ru.cft.template.core.entity.User;
 import ru.cft.template.core.entity.Wallet;
-import ru.cft.template.core.service.WalletService;
 
 import javax.validation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -121,36 +119,47 @@ public class TransferServiceImpl implements TransferService {
 
         transferRepository.save(transfer);
 
-        return TransferMapper.ResponseTransferMapper(transfer);
+        return TransferMapper.responseTransferMapper(transfer);
     }
 
-/*@Override
-    public List<ResponseTransferDto> getTransfers(FilterTransfersDto filterTransfersDto, UUID sessionId) {
+    @Override
+    public ListTransfersDto getTransfers(TransferType transferType, StatusTransfer statusTransfer, UUID userId, Long size, Long current, UUID sessionId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionNotFoundException("Session with ID: " + sessionId + " not found"));
 
-        if (filterTransfersDto.transferType() == TransferType.TRANSFER) {
+        //userId получатель receiverWallet
+        List<Transfer> transfers = (List<Transfer>) transferRepository.findAll();//все переводы
+        List<ResponseTransferDto> filterTransfers = new ArrayList<>();//отфильтрованный список
 
-        }
-        if (filterTransfersDto.active() == StatusTransfer.PAID) {
-
-        }
-        if (filterTransfersDto.active() == StatusTransfer.UNPAID) {
-
-        }
-
-        List<Transfer> transfers = (List<Transfer>) transferRepository.findAll();
+        //фильтрация
         for (Transfer transfer : transfers) {
-            //System.out.println("ID: " + transfer.getId() + ", Name: " + transfer.getName());
+            if ((transferType == null || transferType.equals(transfer.getTransferType())) &&
+                    (statusTransfer == null || statusTransfer.equals(transfer.getStatus()))
+                /*(userId == null || userId.equals(transfer.getReceiveWallet()))*/) {
+
+                filterTransfers.add(TransferMapper.responseTransferMapper(transfer));
+            }
         }
 
-        if(!session.getActive())
-        {
+        //пагинация
+        //size - количество на одной странице (размер страницы), count - всего страниц, current - текущая
+        int countTransfers = filterTransfers.size();//всего переводов
+        int countPage = (int) Math.ceil((double) countTransfers / size);//всего страниц
+
+        if (countTransfers > 0 && current > countPage) {
+            throw new PaginationException("Вы хотите посмотреть несуществующую страницу.");
+        }
+
+        List<ResponseTransferDto> currentTransfers = filterTransfers.stream().skip((current - 1) * size).limit(size).toList(); //список переводов на данной странице
+
+        Pagination pagination = new Pagination(size, countTransfers, current);
+
+        /*if (!session.getActive()) {
             throw new UserNotFoundException("вы не авторизованы");
-        }
+        }*/
 
-        return List < TransferMapper.ResponseTransferMapper(transfer) >;
-    }*/
+        return TransferMapper.listTransfersDto(currentTransfers, pagination);
+    }
 
     @Override
     public ResponseTransferDto getTransferById(UUID transferId, UUID sessionId) {
@@ -160,7 +169,7 @@ public class TransferServiceImpl implements TransferService {
         Transfer transfer = transferRepository.findById(transferId)
                 .orElseThrow(() -> new TransferNotFoundException("Transfer with ID: " + transferId + " not found"));
 
-        return TransferMapper.ResponseTransferMapper(transfer);
+        return TransferMapper.responseTransferMapper(transfer);
     }
 
 }
